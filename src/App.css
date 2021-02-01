@@ -1,0 +1,24 @@
+body {
+  background-color: #111;
+}
+div.cell {
+  width: 20px;
+  height: 20px;
+  background-color: #fff;
+  border: 1px solid #aaa;
+  float: left;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+div.cell.live {
+  background-color: #000;
+
+}
+
+div.grid {
+  margin: 150px auto
+}
+
+h1 { color: #fff; }
