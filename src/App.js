@@ -78,10 +78,10 @@ const App = () => {
 
   const toggleCell = (cell_index) => !running && setModelState({...modelState, cells: modelState.cells.map((live, index) => cell_index == index ? !live : live)})
 
-  const toggleRunning = () => setModelState({...modelState, running: !modelState.running})
+  const toggleRunning = () => setModelState({...modelState, running: !modelState.running, boards: !modelState.running  ? [] : modelState.boards, iterations: !modelState.running  ? 0 : modelState.iterations})
 
   useEffect(() => {
-    if (!running || modelState.iterations >= MAX_ITERATIONS || !cells.find((cell)=> !!cell) || modelState.match > -1 && modelState.match <= modelState.iterations) {
+    if (!running || modelState.iterations >= MAX_ITERATIONS || !cells.find((cell)=> !!cell) ) {
       clearTimeout(timer)
       setModelState({...modelState, running: false})
     } else if (running) {
@@ -99,8 +99,10 @@ const App = () => {
       ...modelState, 
       iterations: modelState.iterations+1, 
       cells: new_cells,
-      boards: [...modelState.boards, new_board],
-      match: modelState.boards.indexOf(new_board)
+      boards: modelState.boards[modelState.boards.length-1] != new_board ? [...modelState.boards, new_board] : modelState.boards,
+      still: modelState.boards[modelState.boards.length-1] == new_board,
+      match: modelState.boards.indexOf(new_board),
+      running: (modelState.boards[modelState.boards.length-1] == new_board) ? false : modelState.running
       
     })
   }
@@ -111,7 +113,13 @@ const App = () => {
         <button onClick={toggleRunning}>{running ? 'stop' : 'start'}</button>
         <button onClick={reset}>reset</button>
         <h1>Iterations: {iterations}</h1>
-        <h1>Match: {match}</h1>
+        <h1>Status: {
+                    (modelState.still && 'Still') || 
+                    (!modelState.still && modelState.match > -1 && modelState.match <= modelState.iterations && "Oscillating") ||
+                    (modelState.running && 'Running') || 
+                    'Stopped'
+                    }
+          </h1>
           <Grid>{cells.map((live, index) => <Cell onClick={() => toggleCell(index)} key={index} live={live} />)}</Grid>
         </>
 }
